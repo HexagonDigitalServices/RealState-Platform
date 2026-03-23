@@ -197,39 +197,6 @@ export const getAllProperties = async (req, res) => {
 };
 
 // GET PROPERTY DETAILS
-export const getPropertyDetails = async (req, res) => {
-  try {
-    const property = await Property.findById(req.params.id).populate(
-      "seller",
-      "name email phone profilePic"
-    );
-
-    if (!property) {
-      return res.status(404).json({
-        success: false,
-        message: "Property not found",
-      });
-    }
-    
-    let visitorId = req.ip;
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        visitorId = decoded.id;
-      } catch (err) {
-        //ignore
-      }
-    }
-    const isSellerChecking = visitorId === property.seller._id.toString();
-
-    if (!isSellerChecking && !property.viewedBy.includes(visitorId)) {
-      property.views += 1;
-      property.viewedBy.push(visitorId);
-      await property.save();
-    }
-
     const similarProperties = await Property.find({
       _id: { $ne: property._id },
       city: property.city,
@@ -239,19 +206,7 @@ export const getPropertyDetails = async (req, res) => {
       .limit(4)
       .select("title price images city area propertyType bhk areaSize status");
 
-    res.json({
-      success: true,
-      property,
-      similarProperties,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
+   
 // SELLER DASHBOARD STATS
     // Calculate total views across all properties
     const viewsData = await Property.aggregate([
