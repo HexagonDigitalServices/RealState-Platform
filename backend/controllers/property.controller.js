@@ -1,13 +1,3 @@
-export const addProperty = async (req, res) => {
-  try {
-    let imageUrls = [];
-    if (req.files && req.files.length > 0) {
-      for (let file of req.files) {
-        const result = await uploadToCloudinary(file.buffer);
-        imageUrls.push(result.secure_url);
-      }
-    }
-
     const property = await Property.create({
       title: req.body.title,
       description: req.body.description,
@@ -36,11 +26,7 @@ export const addProperty = async (req, res) => {
         : [],
     });
 
-    res.json({
-      success: true,
-      property,
-    });
-  } catch (error) {
+catch (error) {
     console.error("ADD_PROPERTY_ERROR:", error);
     res.status(500).json({
       success: false,
@@ -48,7 +34,6 @@ export const addProperty = async (req, res) => {
 
     });
   }
-};
 
 // UPDATE PROPERTY
 export const updateProperty = async (req, res) => {
@@ -61,15 +46,13 @@ export const updateProperty = async (req, res) => {
       });
     }
 
-    // check ownership
     if (property.seller.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
         message: "Not authorized",
       });
     }
-
-    // update text fields
+    
     const fields = [
       "title",
       "description",
@@ -99,7 +82,6 @@ export const updateProperty = async (req, res) => {
       }
     });
 
-    // handle existing images (deletion)
     if (req.body.existingImages) {
       try {
         const existing = JSON.parse(req.body.existingImages);
@@ -109,7 +91,6 @@ export const updateProperty = async (req, res) => {
       }
     }
 
-    // upload new images if exist
     if (req.files && req.files.length > 0) {
       let newImages = [];
       for (let file of req.files) {
@@ -229,9 +210,7 @@ export const getPropertyDetails = async (req, res) => {
         message: "Property not found",
       });
     }
-
-    // UNIQUE VIEW TRACKING
-    // Identify visitor by User ID 
+    
     let visitorId = req.ip;
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith("Bearer ")) {
@@ -240,14 +219,11 @@ export const getPropertyDetails = async (req, res) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         visitorId = decoded.id;
       } catch (err) {
-        // Fallback to IP if token invalid
+        //ignore
       }
     }
-
-    // Identify if the visitor is the seller themselves
     const isSellerChecking = visitorId === property.seller._id.toString();
 
-    // Only increment views if not the seller and hasn't viewed yet
     if (!isSellerChecking && !property.viewedBy.includes(visitorId)) {
       property.views += 1;
       property.viewedBy.push(visitorId);
