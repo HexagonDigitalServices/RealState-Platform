@@ -196,21 +196,13 @@ export const getAllProperties = async (req, res) => {
   }
 };
 
-// GET PROPERTY DETAILS
-    const similarProperties = await Property.find({
-      _id: { $ne: property._id },
-      city: property.city,
-      propertyType: property.propertyType,
-      status: property.status,
-    })
-      .limit(4)
-      .select("title price images city area propertyType bhk areaSize status");
-
-   
-// SELLER DASHBOARD STATS
-    // Calculate total views across all properties
-    const viewsData = await Property.aggregate([
-      { $match: { seller: sellerId } },
-      { $group: { _id: null, totalViews: { $sum: "$views" } } },
+//GET PROPERTY COUNTS BY TYPE
+    const counts = await Property.aggregate([
+      { $match: { status: "sale" } },
+      { $group: { _id: "$propertyType", count: { $sum: 1 } } }
     ]);
-    const totalViews = viewsData.length > 0 ? viewsData[0].totalViews : 0;
+
+    const formattedCounts = counts.reduce((acc, curr) => {
+      acc[curr._id] = curr.count;
+      return acc;
+    }, {});   
