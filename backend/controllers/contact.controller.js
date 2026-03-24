@@ -15,13 +15,3 @@
                 </div>
             </div>
         `;
-
-
-       
-    catch (err) {
-        console.error("Contact Error:", err);
-        res.status(500).json({
-            success: false,
-            message: err.message || "Failed to send message"
-        });
-    }
