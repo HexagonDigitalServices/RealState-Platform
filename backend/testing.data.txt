@@ -1,0 +1,16 @@
+{
+    "title": "2BHK Flat in Bhubaneswar",
+"description": "Spacious flat with parking",
+"price": "5000000",
+"city": "Bhubaneswar",
+"area": "Patia",
+"pincode": "751024",
+"propertyType": "apartment",
+"bhk": "2",
+"bathrooms": "2",
+"areaSize": "1200",
+"furnishing": "semi-furnished",
+"status": "sale",
+"amenities": ["parking","lift","gym"],
+"images": ""
+}
