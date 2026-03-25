@@ -1,13 +1,3 @@
-export const addProperty = async (req, res) => {
-  try {
-    let imageUrls = [];
-    if (req.files && req.files.length > 0) {
-      for (let file of req.files) {
-        const result = await uploadToCloudinary(file.buffer);
-        imageUrls.push(result.secure_url);
-      }
-    }
-
     const property = await Property.create({
       title: req.body.title,
       description: req.body.description,
@@ -36,11 +26,7 @@ export const addProperty = async (req, res) => {
         : [],
     });
 
-    res.json({
-      success: true,
-      property,
-    });
-  } catch (error) {
+catch (error) {
     console.error("ADD_PROPERTY_ERROR:", error);
     res.status(500).json({
       success: false,
@@ -48,7 +34,6 @@ export const addProperty = async (req, res) => {
 
     });
   }
-};
 
 // UPDATE PROPERTY
 export const updateProperty = async (req, res) => {
@@ -61,15 +46,13 @@ export const updateProperty = async (req, res) => {
       });
     }
 
-    // check ownership
     if (property.seller.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
         message: "Not authorized",
       });
     }
-
-    // update text fields
+    
     const fields = [
       "title",
       "description",
@@ -99,7 +82,6 @@ export const updateProperty = async (req, res) => {
       }
     });
 
-    // handle existing images (deletion)
     if (req.body.existingImages) {
       try {
         const existing = JSON.parse(req.body.existingImages);
@@ -109,7 +91,6 @@ export const updateProperty = async (req, res) => {
       }
     }
 
-    // upload new images if exist
     if (req.files && req.files.length > 0) {
       let newImages = [];
       for (let file of req.files) {
@@ -215,71 +196,13 @@ export const getAllProperties = async (req, res) => {
   }
 };
 
-// GET PROPERTY DETAILS
-export const getPropertyDetails = async (req, res) => {
-  try {
-    const property = await Property.findById(req.params.id).populate(
-      "seller",
-      "name email phone profilePic"
-    );
-
-    if (!property) {
-      return res.status(404).json({
-        success: false,
-        message: "Property not found",
-      });
-    }
-
-    // UNIQUE VIEW TRACKING
-    // Identify visitor by User ID 
-    let visitorId = req.ip;
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        visitorId = decoded.id;
-      } catch (err) {
-        // Fallback to IP if token invalid
-      }
-    }
-
-    // Identify if the visitor is the seller themselves
-    const isSellerChecking = visitorId === property.seller._id.toString();
-
-    // Only increment views if not the seller and hasn't viewed yet
-    if (!isSellerChecking && !property.viewedBy.includes(visitorId)) {
-      property.views += 1;
-      property.viewedBy.push(visitorId);
-      await property.save();
-    }
-
-    const similarProperties = await Property.find({
-      _id: { $ne: property._id },
-      city: property.city,
-      propertyType: property.propertyType,
-      status: property.status,
-    })
-      .limit(4)
-      .select("title price images city area propertyType bhk areaSize status");
-
-    res.json({
-      success: true,
-      property,
-      similarProperties,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-// SELLER DASHBOARD STATS
-    // Calculate total views across all properties
-    const viewsData = await Property.aggregate([
-      { $match: { seller: sellerId } },
-      { $group: { _id: null, totalViews: { $sum: "$views" } } },
+//GET PROPERTY COUNTS BY TYPE
+    const counts = await Property.aggregate([
+      { $match: { status: "sale" } },
+      { $group: { _id: "$propertyType", count: { $sum: 1 } } }
     ]);
-    const totalViews = viewsData.length > 0 ? viewsData[0].totalViews : 0;
+
+    const formattedCounts = counts.reduce((acc, curr) => {
+      acc[curr._id] = curr.count;
+      return acc;
+    }, {});   

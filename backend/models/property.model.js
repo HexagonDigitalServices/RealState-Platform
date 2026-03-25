@@ -1,7 +1,4 @@
-import mongoose from "mongoose";
 
-const propertySchema = new mongoose.Schema(
-  {
     title: {
       type: String,
       required: true,
@@ -80,9 +77,4 @@ const propertySchema = new mongoose.Schema(
       default: 0,
     },
     viewedBy: [{ type: String }],
-  },
-  { timestamps: true }
-);
-
-const Property = mongoose.model("Property", propertySchema);
-export default Property;
+ 
