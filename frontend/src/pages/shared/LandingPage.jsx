@@ -120,3 +120,50 @@ const categories = [
                  
                   ),
                 )}
+
+{/* Column 2: Quick Links */}
+            <div>
+              <h4 className={s.footerHeading}>Company</h4>
+              <ul className={s.footerLinks}>
+                <li>
+                  <a href="/" className={s.footerLink}>
+                    Home
+                  </a>
+                </li>
+                <li>
+                  <a href="/properties" className={s.footerLink}>
+                    Property
+                  </a>
+                </li>
+                <li>
+                  <a href="/wishlist" className={s.footerLink}>
+                    Wishlist
+                  </a>
+                </li>
+                <li>
+                  <a href="/contact" className={s.footerLink}>
+                    Contact
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: Contact Info */}
+            <div>
+              <h4 className={s.footerHeading}>Support</h4>
+              <ul className={s.footerLinks}>
+                <li className={s.contactInfo}>
+                  <HiMail className="text-primary text-xl" />{" "}
+                  contact@reestate.com
+                </li>
+                <li className={s.contactInfo}>
+                  <HiPhone className="text-primary text-xl" /> +91 1234567890
+                </li>
+                <li className={s.contactInfoStart}>
+                  <HiLocationMarker
+                    className={`text-primary ${s.contactIcon}`}
+                  />
+                  123 Business Hub, India
+                </li>
+              </ul>
+            </div>
