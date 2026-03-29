@@ -15,14 +15,6 @@
     { label: "Commercial", value: "commercial" },
   ];
   const bhkOptions = ["1", "2", "3", "4", "5+"];
-  const amenitiesOptions = [
-    "Parking",
-    "Swimming Pool",
-    "Gym",
-    "Security",
-    "Play Area",
-    "Elevator",
-  ];
   const furnishingOptions = [
     { label: "Furnished", value: "furnished" },
     { label: "Semi-Furnished", value: "semi-furnished" },
