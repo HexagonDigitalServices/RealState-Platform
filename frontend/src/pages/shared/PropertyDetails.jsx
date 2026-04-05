@@ -99,16 +99,80 @@
             
                       ₹
                      
+                 <div className={s.sellerCard}>
+              <div className={s.sellerInfo}>
+                <div className={s.sellerAvatar}>
+                  <img
                     src={
                       property.seller?.profilePic ||
                       `https://ui-avatars.com/api/?name=${property.seller?.name || "Seller"}&background=0d6e59&color=fff`
                     }
                     alt="Agent"
                     className={s.sellerAvatarImage}
+                  />
+                </div>
+                <div className={s.sellerDetails}>
+                  <div className={s.sellerNameLink}>
+                    <h4 className={s.sellerName}>
+                      {property.seller?.name || "Seller"}
+                    </h4>
+                  </div>
+                  <div className={s.sellerVerifiedBadge}>
+                    <HiBadgeCheck className={s.verifiedIcon} /> Verified Seller
+                  </div>
+                </div>
+              </div>
+
+              <div className={s.chatButtonWrapper}>
+                <button className={s.chatButton} onClick={handleChatStart}>
+                  <HiChatAlt /> Chat
+                </button>
+              </div>
+
+              {/* Inquiry Form */}
+              <h4 className={s.inquiryFormTitle}>Inquire</h4>
+              <form onSubmit={handleInquirySubmit}>
+                {user?.role === "buyer" ? (
+                  <>
+                    <textarea
+                      placeholder="Your Message..."
+                      value={inquiry.message}
+                      onChange={(e) =>
+                        setInquiry({ ...inquiry, message: e.target.value })
+                      }
+                      className={s.inquiryTextarea}
+                      required
+                    />
+                    <button
+                      type="submit"
+                      className={s.inquirySubmitButton}
+                      disabled={inquiryStatus.loading}
+                    >
+                      {inquiryStatus.loading ? "Sending..." : "Send Inquiry"}
+                    </button>
+                    {inquiryStatus.success && (
+                      <p className={s.inquirySuccessMessage}>Inquiry sent!</p>
+                    )}
+                  </>
+                ) : (
+                  <div className={s.inquiryDisabledMessage}>
+                    <p className={s.inquiryDisabledText}>
+                      {user
+                        ? "Only buyers can send inquiries."
+                        : "Please login as a buyer to send inquiries."}
+                    </p>
+                    {!user && (
+                      <Link to="/login" className={s.inquiryLoginButton}>
+                        Login
+                      </Link>
+                    )}
+                  </div>
+                )}
+              </form>
+            </div>
                 
 
-            
-                 
+          
             {[
               {
                 label: "Property ID",
