@@ -1,3 +1,5 @@
+
+
   const statCards = [
     {
       title: "Total Users",
@@ -28,3 +30,12 @@
       bg: "#dcfce7",
     },
   ];
+
+
+
+   
+            {["Database", "Media Storage", "Auth Service", "API Gateway"].map(
+              (service, i) => (
+
+              ),
+            )}
