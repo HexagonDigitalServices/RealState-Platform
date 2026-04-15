@@ -57,10 +57,6 @@
         });
        
 
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   const handleAmenityChange = (amenity) => {
     setFormData((prev) => {
       const current = prev.amenities || [];
@@ -70,27 +66,6 @@
         return { ...prev, amenities: [...current, amenity] };
       }
     });
-  };
-
-  const handleNewImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (existingImages.length + newImages.length + files.length > 10) {
-      setError("Total images cannot exceed 10.");
-      return;
-    }
-    setNewImages((prev) => [...prev, ...files]);
-
-    const previews = files.map((file) => URL.createObjectURL(file));
-    setNewImagePreviews((prev) => [...prev, ...previews]);
-  };
-
-  const removeExistingImage = (url) => {
-    setExistingImages(existingImages.filter((img) => img !== url));
-  };
-
-  const removeNewImage = (index) => {
-    setNewImages(newImages.filter((_, i) => i !== index));
-    setNewImagePreviews(newImagePreviews.filter((_, i) => i !== index));
   };
 
 
